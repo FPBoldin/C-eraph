@@ -3,13 +3,17 @@ package ee.ut.dsg.seraph.content;
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.event.map.MapEventBean;
 import ee.ut.dsg.jasper.streams.items.GraphStreamItem;
+import ee.ut.dsg.seraph.streams.items.ExternalNode;
 import ee.ut.dsg.seraph.streams.items.PGraphStreamItem;
 import ee.ut.dsg.jasper.streams.items.StreamItem;
 import ee.ut.dsg.seraph.streams.PGraph;
 import it.polimi.yasper.core.secret.content.Content;
+import jdk.javadoc.internal.doclets.toolkit.util.Extern;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
+import org.neo4j.graphdb.*;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,11 +23,13 @@ public class ContentPGraphBean implements Content<PGraph> {
     protected List<PGraph> elements;
     protected PGraph graph;
 
+    protected GraphDatabaseService db;
+
     @Setter
     private long last_timestamp_changed;
 
-    public ContentPGraphBean(PGraph graph) {
-        this.graph = graph;
+    public ContentPGraphBean(GraphDatabaseService db) {
+        this.db = db;
         this.elements = new ArrayList<>();
     }
 
@@ -93,9 +99,35 @@ public class ContentPGraphBean implements Content<PGraph> {
 
     @Override
     public PGraph coalesce() {
-        graph.clear();
-        elements.forEach(ig -> this.graph.addAll(ig));
+        Transaction tx = db.beginTx();
+
+        tx.execute("MATCH (n) DETACH DELETE n");
+
+        //TODO First run query (delete n when n.prov == stream(name)) | added the execute delete query
+        //TODO create a query that adds all the information into the elements
+
+        /*
+            MERGE (p1:Person { name: event.initiated })
+            MERGE (p2:Person { name: event.accepted })
+            CREATE (p1)-[:FRIENDS { when: event.date }]->(p2)
+        */
+        elements.forEach(pGraph -> {
+            try {
+                pGraph.nodes().forEach(node -> {
+                    tx.createNode(Label.label("person")).setProperty("name",node);
+                });
+                pGraph.edges().forEach(edge -> {
+                    ExternalNode firstNode = (ExternalNode) tx.findNode(Label.label("person"), "name", edge[0]);
+                    ExternalNode secondNode = (ExternalNode) tx.findNode(Label.label("person"), "name", edge[1]);
+                    firstNode.createRelationshipTo(secondNode, RelationshipType.withName("friends"));
+                });
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        });
         //        elements.stream().flatMap(ig->GraphUtil.findAll(ig).toList().stream()).forEach(this.graph::add);
+
+        tx.commit();
 
         return this.graph;
     }
@@ -115,7 +147,11 @@ public class ContentPGraphBean implements Content<PGraph> {
     }
 
     public void replace(PGraph coalesce) {
-        this.graph.clear();
-        graph.addAll(coalesce);
+
+        Transaction tx = db.beginTx();
+
+        tx.execute("MATCH (n) DETACH DELETE n");
+
+        coalesce();
     }
 }

@@ -9,6 +9,7 @@ import it.polimi.yasper.core.sds.SDS;
 import lombok.extern.log4j.Log4j;
 import org.apache.jena.query.QueryExecution;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.test.TestDatabaseManagementServiceBuilder;
@@ -33,13 +34,14 @@ public class R2ROperatorCypher implements RelationToRelationOperator<PBinding> {
 
     //    DatabaseManagementService managementService = new DatabaseManagementServiceBuilder(databaseDirectory).build();
 //    GraphDatabaseService db = managementService.database(DEFAULT_DATABASE_NAME);
-    TestDatabaseManagementServiceBuilder builder = new TestDatabaseManagementServiceBuilder();
-    GraphDatabaseService db = builder.impermanent().build().database(DEFAULT_DATABASE_NAME);
-
+    //TestDatabaseManagementServiceBuilder builder = new TestDatabaseManagementServiceBuilder();
+    //GraphDatabaseService db = builder.impermanent().build().database(DEFAULT_DATABASE_NAME);
+    GraphDatabaseService db;
 
     private Transaction tx;
 
-    public R2ROperatorCypher(ContinuousQuery query, SDS sds, String baseURI) {
+    public R2ROperatorCypher(ContinuousQuery query, SDS sds, String baseURI, GraphDatabaseService db) {
+        this.db = db;
         this.query = query;
         this.sds = sds;
         this.baseURI = baseURI;

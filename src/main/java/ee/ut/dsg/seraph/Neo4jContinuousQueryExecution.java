@@ -2,6 +2,7 @@ package ee.ut.dsg.seraph;
 
 import ee.ut.dsg.seraph.s2r.PBinding;
 import ee.ut.dsg.seraph.streams.PGraph;
+import ee.ut.dsg.seraph.streams.items.ExternalNode;
 import it.polimi.yasper.core.format.QueryResultFormatter;
 import it.polimi.yasper.core.operators.r2r.RelationToRelationOperator;
 import it.polimi.yasper.core.operators.r2s.RelationToStreamOperator;
