@@ -28,6 +28,7 @@ import it.polimi.yasper.core.secret.report.ReportImpl;
 import it.polimi.yasper.core.secret.time.Time;
 import it.polimi.yasper.core.stream.metadata.StreamSchema;
 import it.polimi.yasper.core.stream.web.WebStream;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 import org.apache.jena.reasoner.rulesys.Rule;
 
@@ -60,6 +61,7 @@ public abstract class EsperRSPEngine2 implements StreamRegistrationFeature<EPLPG
 
     protected EngineConfiguration rsp_config;
 
+    @Getter
     private final RuntimeManager manager;
     private final EPServiceProvider cep;
     private final EPRuntime runtime;
