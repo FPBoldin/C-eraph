@@ -16,6 +16,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.test.TestDatabaseManagementServiceBuilder;
 
+import java.net.URL;
 import java.util.Observable;
 
 import static org.neo4j.configuration.GraphDatabaseSettings.DEFAULT_DATABASE_NAME;
@@ -24,19 +25,17 @@ public class KaypherExample {
 
     static Kaypher sr;
 
-    static {
-        try {
-            sr = new Kaypher(0, EngineConfiguration.getDefault());
-        } catch (ConfigurationException e) {
-            e.printStackTrace();
-        }
-    }
+    public static EngineConfiguration aDefault;
 
-    public static void main(String[] args) {
+
+    public static void main(String[] args) throws ConfigurationException {
 
         TestDatabaseManagementServiceBuilder builder = new TestDatabaseManagementServiceBuilder();
         GraphDatabaseService db = builder.impermanent().build().database(DEFAULT_DATABASE_NAME);
-        SDSConfiguration config = null;
+        URL resource = KaypherExample.class.getResource("/kaypher.properties");
+        aDefault = EngineConfiguration.loadConfig(resource.getPath());
+        sr = new Kaypher(0, aDefault);
+        SDSConfiguration config = new SDSConfiguration(resource.getPath());
 
         //Streams
 

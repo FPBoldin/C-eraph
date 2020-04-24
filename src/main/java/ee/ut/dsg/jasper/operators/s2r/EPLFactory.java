@@ -12,7 +12,6 @@ import it.polimi.yasper.core.secret.report.Report;
 import it.polimi.yasper.core.secret.time.Time;
 import it.polimi.yasper.core.stream.web.WebStream;
 import lombok.extern.log4j.Log4j;
-import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -160,11 +159,7 @@ public class EPLFactory {
         View window = EPLFactory.getWindow((int) range, unitRange, type);
         EPStatementObjectModel epStatementObjectModel = EPLFactory.toEPL(tick, report, Maintenance.NAIVE, step, unitStep, type, name, window, annotations);
         log.info(epStatementObjectModel.toEPL());
-<<<<<<< HEAD
         return new EsperWindowAssignerPGraph(EncodingUtils.encode(name), tick, report, time, Maintenance.NAIVE, epStatementObjectModel, time1);
     }
-=======
-        return new EsperWindowAssignerPGraph(EncodingUtils.encode(name), tick, report, time, Maintenance.NAIVE, epStatementObjectModel, time1);    }
->>>>>>> 1c79bdad340d635d2aee6b98a9a0c98f1d34d32f
 
 }
