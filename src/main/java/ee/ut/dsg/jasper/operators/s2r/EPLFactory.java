@@ -12,6 +12,7 @@ import it.polimi.yasper.core.secret.report.Report;
 import it.polimi.yasper.core.secret.time.Time;
 import it.polimi.yasper.core.stream.web.WebStream;
 import lombok.extern.log4j.Log4j;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -154,12 +155,11 @@ public class EPLFactory {
         return new EsperWindowAssigner(EncodingUtils.encode(name), tick, report, time, maintenance, epStatementObjectModel, time1);
     }
 
-    public static EsperWindowAssignerPGraph getWindowAssignerPGraph(Tick tick, Maintenance maintenance, Report report, boolean time, String name, long step, long range, String unitStep, String unitRange, WindowType type, Time time1) {
+    public static EsperWindowAssignerPGraph getWindowAssignerPGraph(Tick tick, Report report, boolean time, String name, long step, long range, String unitStep, String unitRange, WindowType type, Time time1) {
         List<AnnotationPart> annotations = new ArrayList<>();//EPLFactory.getAnnotations(name, range, step, name);
         View window = EPLFactory.getWindow((int) range, unitRange, type);
-        EPStatementObjectModel epStatementObjectModel = EPLFactory.toEPL(tick, report, maintenance, step, unitStep, type, name, window, annotations);
+        EPStatementObjectModel epStatementObjectModel = EPLFactory.toEPL(tick, report, Maintenance.NAIVE, step, unitStep, type, name, window, annotations);
         log.info(epStatementObjectModel.toEPL());
-        return new EsperWindowAssignerPGraph(EncodingUtils.encode(name), tick, report, time, maintenance, epStatementObjectModel, time1);
-    }
+        return new EsperWindowAssignerPGraph(EncodingUtils.encode(name), tick, report, time, Maintenance.NAIVE, epStatementObjectModel, time1);    }
 
 }

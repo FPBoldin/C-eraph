@@ -5,9 +5,15 @@ import it.polimi.yasper.core.engine.features.QueryObserverRegistrationFeature;
 import it.polimi.yasper.core.engine.features.QueryRegistrationFeature;
 import it.polimi.yasper.core.engine.features.QueryStringRegistrationFeature;
 import it.polimi.yasper.core.format.QueryResultFormatter;
+import it.polimi.yasper.core.operators.r2r.RelationToRelationOperator;
+import it.polimi.yasper.core.operators.r2s.RelationToStreamOperator;
+import it.polimi.yasper.core.operators.s2r.StreamToRelationOperator;
 import it.polimi.yasper.core.querying.ContinuousQuery;
 import it.polimi.yasper.core.querying.ContinuousQueryExecution;
+import it.polimi.yasper.core.sds.SDS;
 import it.polimi.yasper.core.sds.SDSConfiguration;
+import it.polimi.yasper.core.stream.data.WebDataStream;
+import org.apache.commons.configuration.ConfigurationException;
 
 public class Kaypher extends EsperRSPEngine2 implements QueryObserverRegistrationFeature, QueryRegistrationFeature<Seraph>, QueryStringRegistrationFeature {
 
@@ -22,12 +28,58 @@ public class Kaypher extends EsperRSPEngine2 implements QueryObserverRegistratio
 
     @Override
     public ContinuousQueryExecution register(Seraph seraph) {
-        return null;
+        ContinuousQueryExecution cqe = new ContinuousQueryExecution() {
+            @Override
+            public WebDataStream outstream() {
+                return null;
+            }
+
+            @Override
+            public ContinuousQuery getContinuousQuery() {
+                return null;
+            }
+
+            @Override
+            public SDS getSDS() {
+                return null;
+            }
+
+            @Override
+            public StreamToRelationOperator[] getS2R() {
+                return new StreamToRelationOperator[0];
+            }
+
+            @Override
+            public RelationToRelationOperator getR2R() {
+                return null;
+            }
+
+            @Override
+            public RelationToStreamOperator getR2S() {
+                return null;
+            }
+
+            @Override
+            public void add(QueryResultFormatter o) {
+
+            }
+
+            @Override
+            public void remove(QueryResultFormatter o) {
+
+            }
+        };
+
+        return cqe;
     }
 
     @Override
     public ContinuousQueryExecution register(Seraph seraph, SDSConfiguration sdsConfiguration) {
-        return null;
+        try {
+            return register(seraph, SDSConfiguration.getDefault());
+        } catch (ConfigurationException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override

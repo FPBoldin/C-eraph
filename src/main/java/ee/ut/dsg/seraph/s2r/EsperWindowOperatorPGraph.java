@@ -2,8 +2,6 @@ package ee.ut.dsg.seraph.s2r;
 
 import ee.ut.dsg.seraph.streams.PGraph;
 import ee.ut.dsg.jasper.operators.s2r.EPLFactory;
-import it.polimi.yasper.core.enums.Maintenance;
-import it.polimi.yasper.core.enums.ReportGrain;
 import it.polimi.yasper.core.enums.Tick;
 import it.polimi.yasper.core.operators.s2r.StreamToRelationOperator;
 import it.polimi.yasper.core.operators.s2r.execution.assigner.Assigner;
@@ -14,7 +12,7 @@ import it.polimi.yasper.core.secret.report.Report;
 import it.polimi.yasper.core.secret.time.Time;
 import it.polimi.yasper.core.stream.data.WebDataStream;
 import lombok.RequiredArgsConstructor;
-import org.apache.jena.reasoner.Reasoner;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +22,6 @@ public class EsperWindowOperatorPGraph implements StreamToRelationOperator<PGrap
 
     private final Tick tick;
     private final Report report;
-    private final Reasoner reasoner;
-    private final Boolean eventtime;
-    private final ReportGrain reportGrain;
-    private final Maintenance maintenance;
     private final Time time;
     private final WindowNode wo;
     private final ContinuousQueryExecution context;
@@ -46,9 +40,7 @@ public class EsperWindowOperatorPGraph implements StreamToRelationOperator<PGrap
 
     @Override
     public TimeVarying<PGraph> apply(WebDataStream<PGraph> s) {
-        EsperWindowAssignerPGraph windowAssigner = EPLFactory.getWindowAssignerPGraph(tick, maintenance, report, eventtime, s.getURI(), wo.getStep(), wo.getRange(), wo.getUnitStep(), wo.getUnitRange(), wo.getType(), time);
-        windowAssigner.setReasoner(reasoner);
-        windowAssigner.setMaintenance(maintenance);
+        EsperWindowAssignerPGraph windowAssigner = EPLFactory.getWindowAssignerPGraph(tick, report, true, s.getURI(), wo.getStep(), wo.getRange(), wo.getUnitStep(), wo.getUnitRange(), wo.getType(), time);
         s.addConsumer(windowAssigner);
         this.assigners.add(windowAssigner);
         return windowAssigner.set(context);

@@ -8,7 +8,6 @@ import ee.ut.dsg.seraph.streams.items.PGraphStreamItem;
 import ee.ut.dsg.jasper.streams.items.StreamItem;
 import ee.ut.dsg.seraph.streams.PGraph;
 import it.polimi.yasper.core.secret.content.Content;
-import jdk.javadoc.internal.doclets.toolkit.util.Extern;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
 import org.neo4j.graphdb.*;
@@ -28,8 +27,8 @@ public class ContentPGraphBean implements Content<PGraph> {
     @Setter
     private long last_timestamp_changed;
 
-    public ContentPGraphBean(GraphDatabaseService db) {
-        this.db = db;
+    public ContentPGraphBean() {
+        //this.db = db;
         this.elements = new ArrayList<>();
     }
 
@@ -114,12 +113,13 @@ public class ContentPGraphBean implements Content<PGraph> {
         elements.forEach(pGraph -> {
             try {
                 pGraph.nodes().forEach(node -> {
-                    tx.createNode(Label.label("person")).setProperty("name",node);
+                    tx.createNode(Label.label("PERSON")).setProperty("name",node);
                 });
                 pGraph.edges().forEach(edge -> {
-                    ExternalNode firstNode = (ExternalNode) tx.findNode(Label.label("person"), "name", edge[0]);
-                    ExternalNode secondNode = (ExternalNode) tx.findNode(Label.label("person"), "name", edge[1]);
-                    firstNode.createRelationshipTo(secondNode, RelationshipType.withName("friends"));
+                    Node firstNode = tx.findNode(Label.label("PERSON"), "name", edge[0]);
+                    Node secondNode = tx.findNode(Label.label("PERSON"), "name", edge[1]);
+                    firstNode.createRelationshipTo(secondNode, RelationshipType.withName("FRIENDS")).setProperty(
+                    "date", edge[2]);
                 });
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -146,12 +146,24 @@ public class ContentPGraphBean implements Content<PGraph> {
         setLast_timestamp_changed(event_time);
     }
 
-    public void replace(PGraph coalesce) {
+    public void replace(PGraph pGraph) {
 
         Transaction tx = db.beginTx();
 
         tx.execute("MATCH (n) DETACH DELETE n");
 
-        coalesce();
+        try {
+            pGraph.nodes().forEach(node -> {
+                tx.createNode(Label.label("PERSON")).setProperty("name",node);
+            });
+            pGraph.edges().forEach(edge -> {
+                Node firstNode = tx.findNode(Label.label("PERSON"), "name", edge[0]);
+                Node secondNode = tx.findNode(Label.label("PERSON"), "name", edge[1]);
+                firstNode.createRelationshipTo(secondNode, RelationshipType.withName("FRIENDS"));
+            });
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        tx.commit();
     }
 }
