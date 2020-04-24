@@ -46,4 +46,8 @@ public class TestWindowNode implements WindowNode {
     public String getUnitStep() {
         return ChronoUnit.MILLIS.toString().toLowerCase();
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 1c79bdad340d635d2aee6b98a9a0c98f1d34d32f

@@ -5,12 +5,14 @@ import ee.ut.dsg.jasper.secret.EsperTime;
 import ee.ut.dsg.seraph.r2r.R2ROperatorCypher;
 import ee.ut.dsg.seraph.s2r.EsperWindowOperatorPGraph;
 import ee.ut.dsg.seraph.streams.EPLPGraphStream;
+import it.polimi.yasper.core.engine.config.EngineConfiguration;
 import it.polimi.yasper.core.enums.Tick;
 import it.polimi.yasper.core.format.QueryResultFormatter;
 import it.polimi.yasper.core.operators.s2r.syntax.WindowNode;
 import it.polimi.yasper.core.querying.ContinuousQueryExecution;
 import it.polimi.yasper.core.sds.SDSConfiguration;
 import it.polimi.yasper.core.secret.report.ReportImpl;
+import org.apache.commons.configuration.ConfigurationException;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.test.TestDatabaseManagementServiceBuilder;
 
@@ -20,13 +22,20 @@ import static org.neo4j.configuration.GraphDatabaseSettings.DEFAULT_DATABASE_NAM
 
 public class KaypherExample {
 
-    static Kaypher sr = new Kaypher(0, null);
+    static Kaypher sr;
+
+    static {
+        try {
+            sr = new Kaypher(0, EngineConfiguration.getDefault());
+        } catch (ConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) {
 
         TestDatabaseManagementServiceBuilder builder = new TestDatabaseManagementServiceBuilder();
         GraphDatabaseService db = builder.impermanent().build().database(DEFAULT_DATABASE_NAME);
-
         SDSConfiguration config = null;
 
         //Streams
@@ -53,7 +62,6 @@ public class KaypherExample {
         EPLPGraphStream register = sr.register(writer);
 
         writer.setWritable(register);
-
 
         cqe.add(new QueryResultFormatter("Neo4j", true) {
             @Override

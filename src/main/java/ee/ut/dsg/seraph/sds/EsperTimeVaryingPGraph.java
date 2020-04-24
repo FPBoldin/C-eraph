@@ -35,8 +35,7 @@ public abstract class EsperTimeVaryingPGraph extends Observable implements State
         this.maintenance = maintenance;
         this.wa = wa;
         this.report = report;
-
-        this.c = new ContentPGraphBean(content);
+        this.c = new ContentPGraphBean();
 
     }
 

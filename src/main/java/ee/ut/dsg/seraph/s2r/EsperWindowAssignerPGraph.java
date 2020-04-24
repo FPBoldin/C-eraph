@@ -22,7 +22,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
 import org.apache.jena.reasoner.Reasoner;
+import org.neo4j.graphdb.GraphDatabaseService;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -40,6 +42,7 @@ public class EsperWindowAssignerPGraph implements Assigner<PGraph, PGraph>, Obse
     private Report report;
     private Tick tick;
     private ReportGrain reportGrain = ReportGrain.SINGLE;
+
 
     @Setter
     @Getter
@@ -78,7 +81,7 @@ public class EsperWindowAssignerPGraph implements Assigner<PGraph, PGraph>, Obse
     @Override
     public Content<PGraph> getContent(long now) {
         SafeIterator<EventBean> iterator = statement.safeIterator();
-        ContentPGraphBean events = new ContentPGraphBean(new PGraph());
+        ContentPGraphBean events = new ContentPGraphBean();
         events.setLast_timestamp_changed(now);
         while (iterator.hasNext()) {
             events.add(iterator.next());
@@ -93,7 +96,22 @@ public class EsperWindowAssignerPGraph implements Assigner<PGraph, PGraph>, Obse
 
     @Override
     public TimeVarying<PGraph> set(ContinuousQueryExecution execution) {
-        PGraph content = new PGraph();
+        PGraph content = new PGraph() {
+            @Override
+            public List<String> nodes() throws FileNotFoundException {
+                return null;
+            }
+
+            @Override
+            public List<String[]> edges() throws FileNotFoundException {
+                return null;
+            }
+
+            @Override
+            public long timestamp() {
+                return 0;
+            }
+        };
         EsperTimeVaryingPGraphImpl n = named()
                 ? new NamedEsperTimeVaryingPGraph(name, content, maintenance, report, this)
                 : new EsperTimeVaryingPGraphImpl(content, maintenance, report, this);

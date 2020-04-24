@@ -60,7 +60,10 @@ public abstract class EsperRSPEngine2 implements StreamRegistrationFeature<EPLPG
     protected EsperStreamRegistrationService stream_registration_service;
 
     protected EngineConfiguration rsp_config;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1c79bdad340d635d2aee6b98a9a0c98f1d34d32f
     @Getter
     private final RuntimeManager manager;
     private final EPServiceProvider cep;

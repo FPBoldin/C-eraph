@@ -2,7 +2,6 @@ package ee.ut.dsg.seraph;
 
 import ee.ut.dsg.seraph.s2r.PBinding;
 import ee.ut.dsg.seraph.streams.PGraph;
-import ee.ut.dsg.seraph.streams.items.ExternalNode;
 import it.polimi.yasper.core.format.QueryResultFormatter;
 import it.polimi.yasper.core.operators.r2r.RelationToRelationOperator;
 import it.polimi.yasper.core.operators.r2s.RelationToStreamOperator;
@@ -13,7 +12,6 @@ import it.polimi.yasper.core.sds.SDS;
 import it.polimi.yasper.core.stream.data.WebDataStream;
 import it.polimi.yasper.core.querying.result.SolutionMapping;
 import lombok.extern.log4j.Log4j;
-import org.neo4j.graphdb.Node;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -22,7 +20,7 @@ import java.util.stream.Stream;
  * Created by riccardo on 03/07/2017.
  */
 @Log4j
-public class Neo4jContinuousQueryExecution extends Observable implements Observer, ContinuousQueryExecution<PGraph, PGraph, PBinding> {
+public class Neo4jContinuousQueryExecution extends Observable implements Observer, ContinuousQueryExecution<PGraph, PBinding, PBinding> {
 
     private final RelationToStreamOperator<PBinding> r2s;
     private final RelationToRelationOperator<PBinding> r2r;
@@ -58,11 +56,10 @@ public class Neo4jContinuousQueryExecution extends Observable implements Observe
         eval1.forEach(ib -> { // For each Map<String, Object> it does something
             PBinding eval = r2s.eval(ib, now);
             setChanged(); // Indicates that the objects has now been changed
-            PGraph pgraph = apply2(eval, now);
             if (outstream() != null) {
-                outstream().put(pgraph, now);
+                outstream().put(eval, now);
             }
-            notifyObservers(pgraph);
+            notifyObservers(eval);
         });
     }
 
@@ -71,11 +68,14 @@ public class Neo4jContinuousQueryExecution extends Observable implements Observe
         return out;
     }
 
-    private PGraph apply2(PBinding eval, Long now) {
-        PGraph pgraph = new PGraph(); // creating a propertygraph to populate with Objects (Nodes)
+    /*
+    private PBinding apply2(PBinding eval, Long now) {
+        PBinding pgraph = new PGraph(); // creating a propertygraph to populate with Objects (Nodes)
         pgraph.setNodes((List<Node>) eval.values().stream());
         return pgraph;
+
     }
+     */
 
 
     @Override
@@ -84,12 +84,12 @@ public class Neo4jContinuousQueryExecution extends Observable implements Observe
     }
 
     @Override
-    public SDS<PGraph> getSDS() {
+    public SDS<PBinding> getSDS() {
         return null;
     }
 
     @Override
-    public StreamToRelationOperator<PGraph, PGraph>[] getS2R() {
+    public StreamToRelationOperator<PGraph, PBinding>[] getS2R() {
         return new StreamToRelationOperator[0];
     }
 

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.jena.graph.Graph;
 
+import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 
@@ -53,7 +54,7 @@ public abstract class StreamItem<T> extends HashMap<String, Object> {
     }
 
 
-    public abstract T addTo(T abox);
+    public abstract T addTo(T abox) throws FileNotFoundException;
 
     public abstract T removeFrom(T abox);
 
