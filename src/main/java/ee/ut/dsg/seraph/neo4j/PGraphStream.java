@@ -16,6 +16,10 @@ public class PGraphStream extends WebStreamImpl implements Runnable {
     public void run() {
         //todo stream.put();
         stream.put(pgrah,1);
+
+
+
+
     }
 
     public void setWritable(EPLPGraphStream register) {

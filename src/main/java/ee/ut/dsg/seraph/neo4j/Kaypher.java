@@ -1,6 +1,6 @@
 package ee.ut.dsg.seraph.neo4j;
 
-import ee.ut.dsg.seraph.engine.EsperRSPEngine;
+import ee.ut.dsg.seraph.engine.esper.EsperRSPEngine;
 import it.polimi.yasper.core.engine.config.EngineConfiguration;
 import it.polimi.yasper.core.engine.features.QueryObserverRegistrationFeature;
 import it.polimi.yasper.core.engine.features.QueryRegistrationFeature;
@@ -15,10 +15,11 @@ import it.polimi.yasper.core.sds.SDS;
 import it.polimi.yasper.core.sds.SDSConfiguration;
 import it.polimi.yasper.core.stream.data.WebDataStream;
 
-public class Kaypher extends EsperRSPEngine implements QueryObserverRegistrationFeature, QueryRegistrationFeature<Seraph>, QueryStringRegistrationFeature {
+public class Kaypher extends EsperRSPEngine<PGraph> implements QueryObserverRegistrationFeature, QueryRegistrationFeature<Seraph>, QueryStringRegistrationFeature {
 
     public Kaypher(long t0, EngineConfiguration configuration) {
         super(t0, configuration);
+        stream_registration_service = new EsperStreamRegistrationServiceImplNeo4j(admin);
     }
 
     @Override

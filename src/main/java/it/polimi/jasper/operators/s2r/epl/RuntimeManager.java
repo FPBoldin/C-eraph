@@ -11,6 +11,10 @@ public class RuntimeManager {
     private static EPAdministrator cepAdm;
     private static EPRuntime cepRT;
 
+    static {
+        getCEP();
+        getAdmin();
+    }
     public static EPServiceProvider getCEP() {
         if (cep == null) {
             Configuration cep_config = new Configuration();
@@ -26,14 +30,14 @@ public class RuntimeManager {
 
     public static EPAdministrator getAdmin() {
         if (cepAdm == null) {
-            cepAdm = cep.getEPAdministrator();
+            cepAdm = getCEP().getEPAdministrator();
         }
         return cepAdm;
     }
 
     public static EPRuntime getEPRuntime() {
         if (cepRT == null) {
-            cepRT = cep.getEPRuntime();
+            cepRT = getCEP().getEPRuntime();
         }
         return cepRT;
     }

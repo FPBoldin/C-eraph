@@ -1,8 +1,7 @@
 package ee.ut.dsg.seraph.neo4j;
 
-import ee.ut.dsg.seraph.streams.items.RDFStreamItem;
-import org.apache.jena.graph.Graph;
-import org.apache.jena.graph.GraphUtil;
+
+import it.polimi.jasper.streams.items.RDFStreamItem;
 
 //TODO wrap rid of  JenaGraph
 public class GraphStreamItem extends RDFStreamItem<PGraph> {

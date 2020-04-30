@@ -3,8 +3,8 @@ package ee.ut.dsg.seraph.neo4j;
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.event.map.MapEventBean;
 
-import ee.ut.dsg.seraph.streams.items.StreamItem;
 import it.polimi.jasper.secret.content.ContentEventBean;
+import it.polimi.jasper.streams.items.StreamItem;
 import it.polimi.yasper.core.secret.content.Content;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
@@ -37,7 +37,7 @@ public class ContentPGraphBean extends ContentEventBean<PGraph, PGraph, PGraph> 
         IStreamUpdate(newData);
     }
 
-    private void handleSingleIStream(StreamItem st) {
+    protected void handleSingleIStream(StreamItem st) {
         // log.debug("Handling single IStreamTest [" + st + "]");
         elements.add((PGraph) st.getTypedContent());
     }

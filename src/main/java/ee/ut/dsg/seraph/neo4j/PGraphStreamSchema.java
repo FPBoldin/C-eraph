@@ -1,7 +1,7 @@
 package ee.ut.dsg.seraph.neo4j;
 
 
-import ee.ut.dsg.seraph.streams.schema.RDFStreamSchema;
+import it.polimi.jasper.streams.schema.RDFStreamSchema;
 import it.polimi.yasper.core.stream.metadata.SchemaEntry;
 
 import java.util.HashSet;

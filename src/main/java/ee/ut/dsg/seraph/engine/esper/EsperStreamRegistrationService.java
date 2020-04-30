@@ -4,7 +4,7 @@ import com.espertech.esper.client.EPAdministrator;
 import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.soda.CreateSchemaClause;
 import com.espertech.esper.client.soda.SchemaColumnDesc;
-import ee.ut.dsg.seraph.utils.EncodingUtils;
+import it.polimi.jasper.utils.EncodingUtils;
 import it.polimi.yasper.core.exceptions.UnregisteredStreamExeception;
 import it.polimi.yasper.core.stream.data.WebDataStream;
 import it.polimi.yasper.core.stream.web.WebStream;

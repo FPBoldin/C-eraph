@@ -1,6 +1,7 @@
 package ee.ut.dsg.seraph.neo4j;
 
-import ee.ut.dsg.seraph.streams.items.RDFStreamItem;
+
+import it.polimi.jasper.streams.items.RDFStreamItem;
 
 import java.io.FileNotFoundException;
 

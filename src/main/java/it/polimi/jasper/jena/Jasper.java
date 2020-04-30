@@ -1,9 +1,9 @@
 package it.polimi.jasper.jena;
 
-import com.espertech.esper.client.EPRuntime;
-import it.polimi.jasper.engine.EsperRSPEngine;
+import ee.ut.dsg.seraph.engine.esper.EsperRSPEngine;
 import it.polimi.jasper.jena.syntax.QueryFactory;
 import it.polimi.jasper.jena.syntax.RSPQLJenaQuery;
+import it.polimi.jasper.querying.Entailment;
 import it.polimi.yasper.core.engine.config.EngineConfiguration;
 import it.polimi.yasper.core.engine.features.QueryObserverRegistrationFeature;
 import it.polimi.yasper.core.engine.features.QueryRegistrationFeature;
@@ -37,6 +37,18 @@ public class Jasper extends EsperRSPEngine<Graph> implements QueryObserverRegist
         this.reportGrain = ReportGrain.SINGLE;
         this.maintenance = Maintenance.NAIVE;
         this.stream_registration_service = new EsperStreamRegistrationServiceImpl(admin);
+
+        String entailment = rsp_config.getString("jasper.entailment");
+
+        if (entailment == null)
+            this.entailment = Entailment.NONE;
+        else {
+            this.entailment = Entailment.valueOf(entailment);
+            this.tbox = rsp_config.getString("rsp_engine.tbox_location");
+            if (tbox == null) {
+                throw new RuntimeException("Not Specified TBOX");
+            }
+        }
     }
 
     public void setReport(ReportingStrategy... sr) {

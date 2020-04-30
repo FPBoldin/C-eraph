@@ -1,12 +1,15 @@
-package ee.ut.dsg.seraph.engine;
+package ee.ut.dsg.seraph.engine.esper;
 
 import com.espertech.esper.client.EPAdministrator;
 import com.espertech.esper.client.EPRuntime;
 import com.espertech.esper.client.EPServiceProvider;
-import ee.ut.dsg.seraph.engine.esper.EsperStreamRegistrationService;
-import ee.ut.dsg.seraph.operators.s2r.epl.RuntimeManager;
-import ee.ut.dsg.seraph.querying.Entailment;
-import ee.ut.dsg.seraph.secret.EsperTime;
+import it.polimi.jasper.engine.esper.EsperStreamRegistrationService;
+import it.polimi.jasper.engine.esper.StreamRegistrationService;
+import it.polimi.jasper.jena.EsperStreamRegistrationServiceImpl;
+import it.polimi.jasper.operators.s2r.epl.RuntimeManager;
+import it.polimi.jasper.querying.Entailment;
+import it.polimi.jasper.secret.EsperTime;
+import it.polimi.jasper.streams.EPLStream;
 import it.polimi.yasper.core.engine.config.EngineConfiguration;
 import it.polimi.yasper.core.engine.features.QueryDeletionFeature;
 import it.polimi.yasper.core.engine.features.StreamDeletionFeature;
@@ -24,10 +27,7 @@ import it.polimi.yasper.core.stream.metadata.StreamSchema;
 import it.polimi.yasper.core.stream.web.WebStream;
 import lombok.extern.log4j.Log4j;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Log4j
 public abstract class EsperRSPEngine<T> implements StreamRegistrationFeature<DataStreamImpl<T>, WebStream>, StreamDeletionFeature<DataStreamImpl<T>>, QueryDeletionFeature {
@@ -70,18 +70,6 @@ public abstract class EsperRSPEngine<T> implements StreamRegistrationFeature<Dat
         this.manager = RuntimeManager.getInstance();
         this.runtime = RuntimeManager.getEPRuntime();
         this.admin = RuntimeManager.getAdmin();
-
-        String entailment = rsp_config.getString("jasper.entailment");
-
-        if (entailment == null)
-            this.entailment = Entailment.NONE;
-        else {
-            this.entailment = Entailment.valueOf(entailment);
-            this.tbox = rsp_config.getString("rsp_engine.tbox_location");
-            if (tbox == null) {
-                throw new RuntimeException("Not Specified TBOX");
-            }
-        }
 
         this.enabled_recursion = rsp_config.isRecursionEnables();
         this.responseFormat = rsp_config.getResponseFormat();
