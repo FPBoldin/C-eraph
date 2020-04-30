@@ -20,7 +20,7 @@ import it.polimi.yasper.core.secret.report.Report;
 import it.polimi.yasper.core.secret.time.Time;
 import it.polimi.yasper.core.stream.data.WebDataStream;
 import lombok.RequiredArgsConstructor;
-import org.apache.jena.graph.Graph;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 
 import java.util.List;
@@ -37,6 +37,7 @@ public class EsperGGWindowOperator implements StreamToRelationOperator<PGraph, P
     private final Time time;
     private final WindowNode wo;
     private final SDS<PGraph> context;
+    private final GraphDatabaseService db;
 
     @Override
     public String iri() {
@@ -74,7 +75,7 @@ public class EsperGGWindowOperator implements StreamToRelationOperator<PGraph, P
 
         public Content<PGraph, PGraph> getContent(long now) {
             SafeIterator<EventBean> iterator = statement.safeIterator();
-            ContentPGraphBean events = new ContentPGraphBean();
+            ContentPGraphBean events = new ContentPGraphBean(db);
             events.setLast_timestamp_changed(now);
             while (iterator.hasNext()) {
                 events.add(iterator.next());
@@ -91,8 +92,8 @@ public class EsperGGWindowOperator implements StreamToRelationOperator<PGraph, P
         @Override
         public TimeVarying<PGraph> set(SDS<PGraph> sds) {
             EsperTimeVaryingGeneric<PGraph, PGraph> n = named()
-                    ? new NamedEsperTimeVaryingPGraph(new ContentPGraphBean(), name, EsperGGWindowOperator.this.maintenance, report, this, sds)
-                    : new EsperTimeVaryingPGraphImpl(new ContentPGraphBean(), EsperGGWindowOperator.this.maintenance, report, this, sds);
+                    ? new NamedEsperTimeVaryingPGraph(new ContentPGraphBean(db), name, EsperGGWindowOperator.this.maintenance, report, this, sds)
+                    : new EsperTimeVaryingPGraphImpl(new ContentPGraphBean(db), EsperGGWindowOperator.this.maintenance, report, this, sds);
             statement.addListener(n);
             return n;
         }

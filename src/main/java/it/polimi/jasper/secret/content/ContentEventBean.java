@@ -25,6 +25,9 @@ public abstract class ContentEventBean<I, T, O> implements Content<I,O> {
         this.elements = new ArrayList<>();
     }
 
+    protected ContentEventBean() {
+    }
+
 
     public void eval(EventBean[] newData, EventBean[] oldData) {
         DStreamUpdate(oldData);

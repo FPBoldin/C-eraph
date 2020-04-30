@@ -52,17 +52,20 @@ public class R2ROperatorCypher implements RelationToRelationOperator<PBinding> {
 //        |--Fred--|--22--|--null--|
 //        |--Riccardo--|--29--|--null--|
 
-        List<Map<String, Object>> res = new ArrayList<>();
+        List<PBinding> res = new ArrayList<>();
         while (result.hasNext()) {
             Map<String, Object> next = result.next();
-            res.add(next);
+            PBinding pb = new PBinding();
+            pb.putAll(next);
+            res.add(pb);
 //        |name-->Fred
 //        |age-->22
         }
 
         tx.commit();
+        tx.close();
 
-        return res.stream().map(b -> new SolutionMappingImplNeo4j(id, (PBinding) b, this.resultVars, ts));
+        return res.stream().map(b -> new SolutionMappingImplNeo4j(id, b, this.resultVars, ts));
     }
 
     private List<PBinding> getSolutionSet(Result results) {

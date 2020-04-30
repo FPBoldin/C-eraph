@@ -35,8 +35,7 @@ public class Kaypher extends EsperRSPEngine<PGraph> implements QueryObserverRegi
     @Override
     public ContinuousQueryExecution register(Seraph seraph, SDSConfiguration sdsConfiguration) {
 
-        new Neo4jContinuousQueryExecution();
-        return cqe;
+        return null;
     }
 
     @Override

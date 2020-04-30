@@ -24,12 +24,10 @@ public class ContentPGraphBean extends ContentEventBean<PGraph, PGraph, PGraph> 
 
     @Setter
     private long last_timestamp_changed;
-
-    public ContentPGraphBean() {
-        super(null);
-        //this.db = db;
+    private String p = "Person";
+    public ContentPGraphBean(GraphDatabaseService db) {
+        this.db = db;
         this.elements = new ArrayList<>();
-
     }
 
     public void eval(EventBean[] newData, EventBean[] oldData) {
@@ -76,7 +74,6 @@ public class ContentPGraphBean extends ContentEventBean<PGraph, PGraph, PGraph> 
         elements.add(e);
     }
 
-
     public void add(EventBean e) {
         if (e instanceof MapEventBean) {
             MapEventBean meb = (MapEventBean) e;
@@ -112,13 +109,14 @@ public class ContentPGraphBean extends ContentEventBean<PGraph, PGraph, PGraph> 
         */
         elements.forEach(pGraph -> {
             try {
+
                 pGraph.nodes().forEach(node -> {
-                    tx.createNode(Label.label("PERSON")).setProperty("name",node);
+                    tx.createNode(Label.label(p)).setProperty("name", node);
                 });
                 pGraph.edges().forEach(edge -> {
-                    Node firstNode = tx.findNode(Label.label("PERSON"), "name", edge[0]);
-                    Node secondNode = tx.findNode(Label.label("PERSON"), "name", edge[1]);
-                    firstNode.createRelationshipTo(secondNode, RelationshipType.withName("FRIENDS")).setProperty(
+                    Node firstNode = tx.findNode(Label.label(p), "name", edge[0]);
+                    Node secondNode = tx.findNode(Label.label(p), "name", edge[1]);
+                    firstNode.createRelationshipTo(secondNode, RelationshipType.withName("friends")).setProperty(
                     "date", edge[2]);
                 });
             } catch (FileNotFoundException e) {
@@ -128,6 +126,7 @@ public class ContentPGraphBean extends ContentEventBean<PGraph, PGraph, PGraph> 
         //        elements.stream().flatMap(ig->GraphUtil.findAll(ig).toList().stream()).forEach(this.graph::add);
 
         tx.commit();
+        tx.close();
 
         return this.graph;
     }
@@ -154,16 +153,17 @@ public class ContentPGraphBean extends ContentEventBean<PGraph, PGraph, PGraph> 
 
         try {
             pGraph.nodes().forEach(node -> {
-                tx.createNode(Label.label("PERSON")).setProperty("name",node);
+                tx.createNode(Label.label(p)).setProperty("name",node);
             });
             pGraph.edges().forEach(edge -> {
-                Node firstNode = tx.findNode(Label.label("PERSON"), "name", edge[0]);
-                Node secondNode = tx.findNode(Label.label("PERSON"), "name", edge[1]);
-                firstNode.createRelationshipTo(secondNode, RelationshipType.withName("FRIENDS"));
+                Node firstNode = tx.findNode(Label.label(p), "name", edge[0]);
+                Node secondNode = tx.findNode(Label.label(p), "name", edge[1]);
+                firstNode.createRelationshipTo(secondNode, RelationshipType.withName("friends"));
             });
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         tx.commit();
+        tx.close();
     }
 }
