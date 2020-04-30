@@ -12,23 +12,14 @@ public class PGraphStream extends WebStreamImpl implements Runnable {
         super(stream_uri);
         this.pgrah = pgrah;
     }
-
     @SneakyThrows
     @Override
     public void run() {
-        //todo stream.put();
-
-
         while (true){
             stream.put(new PGraphImpl(),System.currentTimeMillis());
             Thread.sleep(5000);
         }
-
-
-
-
     }
-
     public void setWritable(EPLPGraphStream register) {
         this.stream = register;
     }
