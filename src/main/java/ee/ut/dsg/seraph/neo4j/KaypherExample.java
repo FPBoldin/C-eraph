@@ -19,6 +19,7 @@ import org.neo4j.test.TestDatabaseManagementServiceBuilder;
 
 import java.net.URL;
 import java.util.Observable;
+import java.util.Observer;
 
 import static org.neo4j.configuration.GraphDatabaseSettings.DEFAULT_DATABASE_NAME;
 
@@ -45,11 +46,6 @@ public class KaypherExample {
             Seraph searph = new Seraph("MATCH (n:Person) RETURN n.name AS name LIMIT 10");
 
 
-            ContinuousQueryExecution cqe = sr.register(searph, config);
-
-            Neo4jSDS sds = new Neo4jSDS();
-
-
             WindowNode window = new TestWindowNode();
             EsperGGWindowOperator wo = new EsperGGWindowOperator(
                     Tick.TIME_DRIVEN,
@@ -71,12 +67,21 @@ public class KaypherExample {
 */
             //R2ROperatorCypher r2r = new R2ROperatorCypher(cqe.getContinuousQuery(), cqe.getSDS(), "name", db);
 
+
+            ContinuousQueryExecution cqe =   new Neo4jContinuousQueryExecution();
+
+
+            Neo4jSDS sds = new Neo4jSDS();
+
+
             //Register the query
             PGraphStream writer = new PGraphStream("stream1", null);
 
             EPLPGraphStream register = (EPLPGraphStream) sr.register(writer);
 
             TimeVarying<PGraph> apply = wo.apply(register);
+
+            sds.add(apply);
 
             //TODO just create the SDS and add the apply to the SDS
             /**
@@ -88,16 +93,18 @@ public class KaypherExample {
 
             writer.setWritable(register);
 
+            sds.addObserver((Observer) cqe);
+
             cqe.add(new QueryResultFormatter("Neo4j", true) {
                 @Override
                 public void update(Observable o, Object arg) {
-
-
+                            System.out.println(arg);
                 }
             });
 
             //In real application we do not have to start the stream.
             (new Thread(writer)).start();
+
         } catch (ConfigurationException e) {
             e.printStackTrace();
         }

@@ -2,6 +2,7 @@ package ee.ut.dsg.seraph.neo4j;
 
 
 import it.polimi.yasper.core.stream.web.WebStreamImpl;
+import lombok.SneakyThrows;
 
 public class PGraphStream extends WebStreamImpl implements Runnable {
     private EPLPGraphStream stream;
@@ -12,10 +13,16 @@ public class PGraphStream extends WebStreamImpl implements Runnable {
         this.pgrah = pgrah;
     }
 
+    @SneakyThrows
     @Override
     public void run() {
         //todo stream.put();
-        stream.put(pgrah,1);
+
+
+        while (true){
+            stream.put(new PGraphImpl(),System.currentTimeMillis());
+            Thread.sleep(5000);
+        }
 
 
 

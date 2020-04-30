@@ -35,47 +35,7 @@ public class Kaypher extends EsperRSPEngine<PGraph> implements QueryObserverRegi
     @Override
     public ContinuousQueryExecution register(Seraph seraph, SDSConfiguration sdsConfiguration) {
 
-        ContinuousQueryExecution cqe = new ContinuousQueryExecution() {
-            @Override
-            public WebDataStream outstream() {
-                return null;
-            }
-
-            @Override
-            public ContinuousQuery getContinuousQuery() {
-                return null;
-            }
-
-            @Override
-            public SDS getSDS() {
-                return null;
-            }
-
-            @Override
-            public StreamToRelationOperator[] getS2R() {
-                return new StreamToRelationOperator[0];
-            }
-
-            @Override
-            public RelationToRelationOperator getR2R() {
-                return null;
-            }
-
-            @Override
-            public RelationToStreamOperator getR2S() {
-                return null;
-            }
-
-            @Override
-            public void add(QueryResultFormatter o) {
-
-            }
-
-            @Override
-            public void remove(QueryResultFormatter o) {
-
-            }
-        };
+        new Neo4jContinuousQueryExecution();
         return cqe;
     }
 
