@@ -1,6 +1,6 @@
 package it.polimi.jasper.jena;
 
-import it.polimi.jasper.sds.AbstractSDS;
+import it.polimi.jasper.sds.GenericSDS;
 import lombok.extern.log4j.Log4j;
 import org.apache.jena.graph.Graph;
 
@@ -8,7 +8,7 @@ import org.apache.jena.graph.Graph;
  * Created by riccardo on 01/07/2017.
  */
 @Log4j
-public class JenaSDSGG extends AbstractSDS<Graph> {
+public class JenaSDSGG extends GenericSDS<Graph> {
 
 
 }

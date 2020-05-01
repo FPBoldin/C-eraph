@@ -1,10 +1,10 @@
 package it.polimi.jasper.jena.b;
 
-import it.polimi.jasper.streams.items.RDFStreamItem;
+import it.polimi.jasper.streams.items.StreamItemImpl;
 import org.apache.jena.graph.Triple;
 
 //TODO wrap rid of  JenaGraph
-public class TripleStreamItem extends RDFStreamItem<Triple> {
+public class TripleStreamItem extends StreamItemImpl<Triple> {
 
     private static final long serialVersionUID = 1L;
 
@@ -18,13 +18,11 @@ public class TripleStreamItem extends RDFStreamItem<Triple> {
                 + '\'' + ", content='" + getTypedContent() + '\'' + ", stream_uri='" + getStream_uri() + '\'' + '}';
     }
 
-    @Override
     public Triple addTo(Triple abox) {
         this.put(content, abox);
         return getTypedContent();
     }
 
-    @Override
     public Triple removeFrom(Triple abox) {
         Triple t = getTypedContent();
         if (getTypedContent().equals(abox))
@@ -32,8 +30,4 @@ public class TripleStreamItem extends RDFStreamItem<Triple> {
         return t;
     }
 
-    @Override
-    public String getStreamURI() {
-        return getStream_uri();
-    }
 }

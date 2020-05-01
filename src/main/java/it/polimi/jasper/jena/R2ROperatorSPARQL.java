@@ -1,6 +1,7 @@
 package it.polimi.jasper.jena;
 
 import it.polimi.jasper.jena.syntax.RSPQLJenaQuery;
+import it.polimi.jasper.operators.SolutionMappingImpl;
 import it.polimi.yasper.core.operators.r2r.RelationToRelationOperator;
 import it.polimi.yasper.core.querying.result.SolutionMapping;
 import lombok.extern.log4j.Log4j;
@@ -54,7 +55,7 @@ public class R2ROperatorSPARQL implements RelationToRelationOperator<Binding>, Q
         //TODO fix up to stream
         String id = baseURI + "result/" + ts;
         this.execution = QueryExecutionFactory.create(query, ds);
-        return Streams.stream(this.execution.execSelect()).map(querySolution -> ((org.apache.jena.sparql.core.ResultBinding) querySolution).getBinding()).map(b -> new SolutionMappingImpl(id, b, this.resultVars, ts));
+        return Streams.stream(this.execution.execSelect()).map(querySolution -> ((org.apache.jena.sparql.core.ResultBinding) querySolution).getBinding()).map(b -> new SolutionMappingImpl<>(id, b, this.resultVars, ts));
     }
 
     private List<Binding> getSolutionSet(ResultSet results) {

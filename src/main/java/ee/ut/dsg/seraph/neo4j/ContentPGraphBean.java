@@ -2,29 +2,28 @@ package ee.ut.dsg.seraph.neo4j;
 
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.event.map.MapEventBean;
-
 import it.polimi.jasper.secret.content.ContentEventBean;
 import it.polimi.jasper.streams.items.StreamItem;
-import it.polimi.yasper.core.secret.content.Content;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
 import org.neo4j.graphdb.*;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Log4j
-public class ContentPGraphBean extends ContentEventBean<PGraph, PGraph, PGraph> {
-
-    protected List<PGraph> elements;
-    protected PGraph graph;
+public class ContentPGraphBean extends ContentEventBean<PGraph, PGraph> {
 
     protected GraphDatabaseService db;
 
     @Setter
     private long last_timestamp_changed;
     private String p = "Person";
+    public RelationshipType friends = RelationshipType.withName("friends");
+
     public ContentPGraphBean(GraphDatabaseService db) {
         this.db = db;
         this.elements = new ArrayList<>();
@@ -47,7 +46,7 @@ public class ContentPGraphBean extends ContentEventBean<PGraph, PGraph, PGraph> 
             for (EventBean e : newData) {
                 if (e instanceof MapEventBean) {
                     MapEventBean meb = (MapEventBean) e;
-                    if (meb.getProperties() instanceof GraphStreamItem) {
+                    if (meb.getProperties() instanceof StreamItem) {
                         handleSingleIStream((StreamItem) e.getUnderlying());
                     } else {
                         for (int i = 0; i < meb.getProperties().size(); i++) {
@@ -77,7 +76,7 @@ public class ContentPGraphBean extends ContentEventBean<PGraph, PGraph, PGraph> 
     public void add(EventBean e) {
         if (e instanceof MapEventBean) {
             MapEventBean meb = (MapEventBean) e;
-            if (meb.getUnderlying() instanceof GraphStreamItem) {
+            if (meb.getUnderlying() instanceof StreamItem) {
                 elements.add((PGraph) ((StreamItem) meb.getUnderlying()).getTypedContent());
             } else {
                 for (int i = 0; i < meb.getProperties().size(); i++) {
@@ -110,14 +109,17 @@ public class ContentPGraphBean extends ContentEventBean<PGraph, PGraph, PGraph> 
         elements.forEach(pGraph -> {
             try {
 
+                //TODO add the name of the window operator.
+                //one can see this as a
                 pGraph.nodes().forEach(node -> {
-                    tx.createNode(Label.label(p)).setProperty("name", node);
+                    Node node1 = tx.createNode(Label.label(p));
+                    node1.setProperty("name", node);
+                    node1.setProperty("__window", "win1");
                 });
                 pGraph.edges().forEach(edge -> {
                     Node firstNode = tx.findNode(Label.label(p), "name", edge[0]);
                     Node secondNode = tx.findNode(Label.label(p), "name", edge[1]);
-                    firstNode.createRelationshipTo(secondNode, RelationshipType.withName("friends")).setProperty(
-                    "date", edge[2]);
+                    firstNode.createRelationshipTo(secondNode, friends);
                 });
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -128,7 +130,45 @@ public class ContentPGraphBean extends ContentEventBean<PGraph, PGraph, PGraph> 
         tx.commit();
         tx.close();
 
-        return this.graph;
+        //TODO ideally, we should return a PGraph built out the new graphdb.
+        return new PGraph() {
+
+
+            @Override
+            public List<String> nodes() throws FileNotFoundException {
+                Transaction tx = db.beginTx();
+                List<String> emptyList = Collections.EMPTY_LIST;
+                Result execute = tx.execute("MATCH (n) RETURN n");
+                while (execute.hasNext()) {
+                    emptyList.add(execute.next().toString());
+                }
+                tx.commit();
+                tx.close();
+                return emptyList;
+            }
+
+            @Override
+            public List<String[]> edges() throws FileNotFoundException {
+                Transaction tx = db.beginTx();
+                List<String[]> emptyList = Collections.EMPTY_LIST;
+                Result execute = tx.execute("MATCH (n)-[p]->(m) RETURN n,m,p");
+                while (execute.hasNext()) {
+                    Map<String, Object> next = execute.next();
+                    emptyList.add(new String[]{
+                            next.get("n").toString(),
+                            next.get("m").toString(),
+                            next.get("p").toString()});
+                }
+                tx.commit();
+                tx.close();
+                return emptyList;
+            }
+
+            @Override
+            public long timestamp() {
+                return System.currentTimeMillis();
+            }
+        };
     }
 
     @Override
@@ -153,12 +193,12 @@ public class ContentPGraphBean extends ContentEventBean<PGraph, PGraph, PGraph> 
 
         try {
             pGraph.nodes().forEach(node -> {
-                tx.createNode(Label.label(p)).setProperty("name",node);
+                tx.createNode(Label.label(p)).setProperty("name", node);
             });
             pGraph.edges().forEach(edge -> {
                 Node firstNode = tx.findNode(Label.label(p), "name", edge[0]);
                 Node secondNode = tx.findNode(Label.label(p), "name", edge[1]);
-                firstNode.createRelationshipTo(secondNode, RelationshipType.withName("friends"));
+                firstNode.createRelationshipTo(secondNode, friends);
             });
         } catch (FileNotFoundException e) {
             e.printStackTrace();

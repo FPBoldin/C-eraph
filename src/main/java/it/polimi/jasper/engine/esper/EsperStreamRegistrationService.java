@@ -4,8 +4,11 @@ import com.espertech.esper.client.EPAdministrator;
 import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.soda.CreateSchemaClause;
 import com.espertech.esper.client.soda.SchemaColumnDesc;
+import it.polimi.jasper.streams.EPLStream;
 import it.polimi.jasper.utils.EncodingUtils;
+import it.polimi.yasper.core.exceptions.StreamRegistrationException;
 import it.polimi.yasper.core.exceptions.UnregisteredStreamExeception;
+import it.polimi.yasper.core.stream.data.DataStreamImpl;
 import it.polimi.yasper.core.stream.data.WebDataStream;
 import it.polimi.yasper.core.stream.web.WebStream;
 import lombok.Getter;
@@ -15,7 +18,7 @@ import java.io.StringWriter;
 import java.util.*;
 
 @Log4j
-public abstract class EsperStreamRegistrationService<T> implements StreamRegistrationService {
+public class EsperStreamRegistrationService<T> implements StreamRegistrationService<T> {
 
     protected final EPAdministrator cepAdm;
 
@@ -65,4 +68,16 @@ public abstract class EsperStreamRegistrationService<T> implements StreamRegistr
         return registeredStreams.containsKey(s);
     }
 
+    public DataStreamImpl<T> register(WebStream s) {
+        String uri = s.getURI();
+        log.info("Registering Stream [" + uri + "]");
+        if (!registeredStreams.containsKey(uri)) {
+            EPStatement epl = createStream(toEPLSchema(s), uri);
+            log.info(epl.getText());
+            EPLStream<T> value = new EPLStream<T>(s.getURI(), s, epl);
+            registeredStreams.put(uri, value);
+            return value;
+        } else
+            throw new StreamRegistrationException("Stream [" + uri + "] already registered");
+    }
 }

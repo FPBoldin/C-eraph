@@ -22,7 +22,7 @@ import java.util.Observer;
  */
 @Log4j
 @Getter
-public abstract class EsperTimeVaryingGeneric<I, O> extends Observable implements StatementAwareUpdateListener, TimeVarying<O> {
+public class EsperTimeVaryingGeneric<I, O> extends Observable implements StatementAwareUpdateListener, TimeVarying<O> {
 
     private final SDS sds;
     protected Report report;
@@ -30,9 +30,9 @@ public abstract class EsperTimeVaryingGeneric<I, O> extends Observable implement
     protected Maintenance maintenance;
     protected long now;
 
-    protected ContentEventBean<I, ?, O> c;
+    protected ContentEventBean<I, O> c;
 
-    public EsperTimeVaryingGeneric(ContentEventBean<I, ?, O> c, Maintenance maintenance, Report report, Assigner<I, O> wa, SDS<O> sds) {
+    public EsperTimeVaryingGeneric(ContentEventBean<I, O> c, Maintenance maintenance, Report report, Assigner<I, O> wa, SDS<O> sds) {
         this.maintenance = maintenance;
         this.wa = wa;
         this.report = report;

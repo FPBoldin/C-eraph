@@ -1,4 +1,4 @@
-package ee.ut.dsg.seraph.neo4j;
+package ee.ut.dsg.seraph.neo4j.poc;
 
 import it.polimi.yasper.core.enums.StreamOperator;
 import it.polimi.yasper.core.operators.s2r.syntax.WindowNode;

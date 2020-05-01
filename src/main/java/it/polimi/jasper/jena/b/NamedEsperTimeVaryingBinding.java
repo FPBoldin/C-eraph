@@ -17,7 +17,7 @@ public class NamedEsperTimeVaryingBinding extends EsperTimeVaryingBindingImpl {
 
     private String uri;
 
-    public NamedEsperTimeVaryingBinding(ContentEventBean<Triple, Graph, BindingSet> c, String uri, Maintenance maintenance, Report report, Assigner<Triple, BindingSet> wo, SDS sds) {
+    public NamedEsperTimeVaryingBinding(ContentEventBean<Triple, BindingSet> c, String uri, Maintenance maintenance, Report report, Assigner<Triple, BindingSet> wo, SDS sds) {
         super(c, maintenance, report, wo, sds);
         this.uri = uri;
     }

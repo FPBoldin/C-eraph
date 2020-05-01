@@ -14,7 +14,7 @@ import org.apache.jena.graph.Triple;
 @Log4j
 public class EsperTimeVaryingBindingImpl extends EsperTimeVaryingGeneric<Triple, BindingSet> {
 
-    public EsperTimeVaryingBindingImpl(ContentEventBean<Triple, Graph, BindingSet> c, Maintenance maintenance, Report report, Assigner<Triple, BindingSet> wo, SDS sds) {
+    public EsperTimeVaryingBindingImpl(ContentEventBean<Triple, BindingSet> c, Maintenance maintenance, Report report, Assigner<Triple, BindingSet> wo, SDS sds) {
         super(c, maintenance, report, wo, sds);
     }
 

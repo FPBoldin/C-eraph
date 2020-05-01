@@ -1,14 +1,11 @@
 package it.polimi.jasper.jena;
 
-import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.SafeIterator;
 import it.polimi.jasper.operators.s2r.AbstractEsperWindowAssigner;
-import it.polimi.jasper.operators.s2r.epl.EPLFactory;
 import it.polimi.jasper.sds.tv.EsperTimeVaryingGeneric;
-import it.polimi.jasper.utils.EncodingUtils;
+import it.polimi.jasper.sds.tv.NamedEsperTimeVaryingGeneric;
 import it.polimi.yasper.core.enums.Maintenance;
-import it.polimi.yasper.core.enums.ReportGrain;
 import it.polimi.yasper.core.enums.Tick;
 import it.polimi.yasper.core.operators.s2r.StreamToRelationOperator;
 import it.polimi.yasper.core.operators.s2r.execution.instance.Window;
@@ -32,7 +29,6 @@ public class EsperGGWindowOperator implements StreamToRelationOperator<Graph, Gr
     private final Tick tick;
     private final Report report;
     private final Boolean eventtime;
-    private final ReportGrain reportGrain;
     private final Maintenance maintenance;
     private final Time time;
     private final WindowNode wo;
@@ -58,22 +54,7 @@ public class EsperGGWindowOperator implements StreamToRelationOperator<Graph, Gr
     class EsperGGWindowAssigner extends AbstractEsperWindowAssigner<Graph, Graph> {
 
         public EsperGGWindowAssigner(String name) {
-            super(EncodingUtils.encode(name),
-                    EsperGGWindowOperator.this.tick,
-                    EsperGGWindowOperator.this.report,
-                    EsperGGWindowOperator.this.eventtime,
-                    EPLFactory.getWindowAssigner(EsperGGWindowOperator.this.tick,
-                            EsperGGWindowOperator.this.maintenance,
-                            EsperGGWindowOperator.this.report,
-                            EsperGGWindowOperator.this.eventtime,
-                            name, wo.getStep(), wo.getRange(), wo.getUnitStep(), wo.getUnitRange(), wo.getType(),
-                            EsperGGWindowOperator.this.time)
-
-                    , EsperGGWindowOperator.this.time);
-        }
-
-        public EsperGGWindowAssigner(String name, Tick tick, Report report, boolean event_time, Maintenance maintenance, EPStatement stm, Time time) {
-            super(name, tick, report, event_time, stm, time);
+            super(name, EsperGGWindowOperator.this.tick, EsperGGWindowOperator.this.report, EsperGGWindowOperator.this.maintenance, EsperGGWindowOperator.this.eventtime, EsperGGWindowOperator.this.time, wo);
         }
 
         public Content<Graph, Graph> getContent(long now) {
@@ -95,8 +76,8 @@ public class EsperGGWindowOperator implements StreamToRelationOperator<Graph, Gr
         @Override
         public TimeVarying<Graph> set(SDS<Graph> sds) {
             EsperTimeVaryingGeneric<Graph, Graph> n = named()
-                    ? new NamedEsperTimeVaryingGraph(new JenaGraphContent(), name, EsperGGWindowOperator.this.maintenance, report, this, sds)
-                    : new EsperTimeVaryingGraphImpl(new JenaGraphContent(), EsperGGWindowOperator.this.maintenance, report, this, sds);
+                    ? new NamedEsperTimeVaryingGeneric<>(new JenaGraphContent(), name, EsperGGWindowOperator.this.maintenance, report, this, sds)
+                    : new EsperTimeVaryingGeneric<>(new JenaGraphContent(), EsperGGWindowOperator.this.maintenance, report, this, sds);
             statement.addListener(n);
             return n;
         }

@@ -18,10 +18,10 @@ import java.util.stream.Stream;
  * Created by riccardo on 03/07/2017.
  */
 @Log4j
-public class Neo4jContinuousQueryExecution extends Observable implements Observer, ContinuousQueryExecution<PGraph, PBinding, PBinding> {
+public class Neo4jContinuousQueryExecution extends Observable implements Observer, ContinuousQueryExecution<PGraph, Map<String, Object>, Map<String, Object>> {
 
-    private final RelationToStreamOperator<PBinding> r2s;
-    private final RelationToRelationOperator<PBinding> r2r;
+    private final RelationToStreamOperator<Map<String, Object>> r2s;
+    private final RelationToRelationOperator<Map<String, Object>> r2r;
     private final SDS sds;
     private final ContinuousQuery query;
     private final WebDataStream out;
@@ -29,7 +29,7 @@ public class Neo4jContinuousQueryExecution extends Observable implements Observe
     private List<StreamToRelationOperator<PGraph, PGraph>> s2rs;
 
 
-    public Neo4jContinuousQueryExecution(WebDataStream out, ContinuousQuery query, SDS sds, RelationToRelationOperator<PBinding> r2r, RelationToStreamOperator<PBinding> r2s, StreamToRelationOperator<PGraph, PGraph>... s2rs) {
+    public Neo4jContinuousQueryExecution(WebDataStream out, ContinuousQuery query, SDS sds, RelationToRelationOperator<Map<String, Object>> r2r, RelationToStreamOperator<Map<String, Object>> r2s, StreamToRelationOperator<PGraph, PGraph>... s2rs) {
         this.query = query;
         this.q =  query;
         this.sds = sds;
@@ -44,7 +44,7 @@ public class Neo4jContinuousQueryExecution extends Observable implements Observe
     public void update(Observable o, Object arg) {
         Long now = (Long) arg; // just marks the current time
         sds.materialize(now); // materializes the sds(data) a collection of timevarying variables
-        Stream<SolutionMapping<PBinding>> eval1 = r2r.eval(now);
+        Stream<SolutionMapping<Map<String, Object>>> eval1 = r2r.eval(now);
         /*
         Stream - returns a stream of elements, here it consists of SolutionMappings<PBinding> named eval1
         r2r    - is just a collection of PBindings( Map<String, Object> )
@@ -52,7 +52,7 @@ public class Neo4jContinuousQueryExecution extends Observable implements Observe
          */
 
         eval1.forEach(ib -> { // For each Map<String, Object> it does something
-            PBinding eval = r2s.eval(ib, now);
+            Map<String, Object> eval = r2s.eval(ib, now);
             setChanged(); // Indicates that the objects has now been changed
             if (outstream() != null) {
                 outstream().put(eval, now);
@@ -82,12 +82,12 @@ public class Neo4jContinuousQueryExecution extends Observable implements Observe
     }
 
     @Override
-    public SDS<PBinding> getSDS() {
+    public SDS<Map<String, Object>> getSDS() {
         return null;
     }
 
     @Override
-    public StreamToRelationOperator<PGraph, PBinding>[] getS2R() {
+    public StreamToRelationOperator<PGraph, Map<String, Object>>[] getS2R() {
         return new StreamToRelationOperator[0];
     }
 
@@ -98,12 +98,12 @@ public class Neo4jContinuousQueryExecution extends Observable implements Observe
 
 
     @Override
-    public RelationToRelationOperator getR2R() {
+    public RelationToRelationOperator<Map<String, Object>> getR2R() {
         return r2r;
     }
 
     @Override
-    public RelationToStreamOperator getR2S() {
+    public RelationToStreamOperator<Map<String, Object>> getR2S() {
         return r2s;
     }
 

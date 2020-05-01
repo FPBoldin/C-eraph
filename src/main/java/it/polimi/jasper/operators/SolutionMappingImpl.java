@@ -1,4 +1,4 @@
-package ee.ut.dsg.seraph.neo4j;
+package it.polimi.jasper.operators;
 
 import it.polimi.yasper.core.querying.result.SolutionMapping;
 import it.polimi.yasper.core.querying.result.SolutionMappingBase;
@@ -6,15 +6,14 @@ import lombok.Getter;
 import lombok.extern.java.Log;
 
 import java.util.List;
-import java.util.Map;
 
 @Log
 @Getter
-public final class SolutionMappingImplNeo4j extends SolutionMappingBase<PBinding> {
+public final class SolutionMappingImpl<T> extends SolutionMappingBase<T> {
 
     private final List<String> result_vars;
 
-    public SolutionMappingImplNeo4j(String id, PBinding results, List<String> resultVars, long cep_timestamp) {
+    public SolutionMappingImpl(String id, T results, List<String> resultVars, long cep_timestamp) {
         super(id, System.currentTimeMillis(), cep_timestamp, results);
         this.result_vars = resultVars;
     }
@@ -24,8 +23,8 @@ public final class SolutionMappingImplNeo4j extends SolutionMappingBase<PBinding
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SolutionMappingImplNeo4j response = (SolutionMappingImplNeo4j) o;
-        Map<String, Object> binding = response.get();
+        SolutionMappingBase<T> response = (SolutionMappingBase<T>) o;
+        T binding = response.get();
         return this.get().equals(binding);
     }
 
@@ -35,13 +34,13 @@ public final class SolutionMappingImplNeo4j extends SolutionMappingBase<PBinding
     }
 
     @Override
-    public SolutionMapping<PBinding> difference(SolutionMapping<PBinding> r) {
+    public SolutionMapping<T> difference(SolutionMapping<T> r) {
         //todo
         return null;
     }
 
     @Override
-    public SolutionMapping<PBinding> intersection(SolutionMapping<PBinding> new_response) {
+    public SolutionMapping<T> intersection(SolutionMapping<T> new_response) {
         //todo
         return null;
     }

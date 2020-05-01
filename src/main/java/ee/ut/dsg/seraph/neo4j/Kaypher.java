@@ -1,25 +1,22 @@
 package ee.ut.dsg.seraph.neo4j;
 
 import ee.ut.dsg.seraph.engine.esper.EsperRSPEngine;
+import ee.ut.dsg.seraph.neo4j.poc.Seraph;
+import it.polimi.jasper.engine.esper.EsperStreamRegistrationService;
 import it.polimi.yasper.core.engine.config.EngineConfiguration;
 import it.polimi.yasper.core.engine.features.QueryObserverRegistrationFeature;
 import it.polimi.yasper.core.engine.features.QueryRegistrationFeature;
 import it.polimi.yasper.core.engine.features.QueryStringRegistrationFeature;
 import it.polimi.yasper.core.format.QueryResultFormatter;
-import it.polimi.yasper.core.operators.r2r.RelationToRelationOperator;
-import it.polimi.yasper.core.operators.r2s.RelationToStreamOperator;
-import it.polimi.yasper.core.operators.s2r.StreamToRelationOperator;
 import it.polimi.yasper.core.querying.ContinuousQuery;
 import it.polimi.yasper.core.querying.ContinuousQueryExecution;
-import it.polimi.yasper.core.sds.SDS;
 import it.polimi.yasper.core.sds.SDSConfiguration;
-import it.polimi.yasper.core.stream.data.WebDataStream;
 
 public class Kaypher extends EsperRSPEngine<PGraph> implements QueryObserverRegistrationFeature, QueryRegistrationFeature<Seraph>, QueryStringRegistrationFeature {
 
     public Kaypher(long t0, EngineConfiguration configuration) {
         super(t0, configuration);
-        stream_registration_service = new EsperStreamRegistrationServiceImplNeo4j(admin);
+        stream_registration_service = new EsperStreamRegistrationService<PGraph>(admin);
     }
 
     @Override

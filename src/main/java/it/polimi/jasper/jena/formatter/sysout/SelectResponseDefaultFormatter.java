@@ -1,7 +1,7 @@
 package it.polimi.jasper.jena.formatter.sysout;
 
 import com.github.jsonldjava.core.JsonLdOptions;
-import it.polimi.jasper.jena.SolutionMappingImpl;
+import it.polimi.jasper.operators.SolutionMappingImpl;
 import it.polimi.yasper.core.format.QueryResultFormatter;
 import lombok.extern.log4j.Log4j;
 import org.apache.jena.atlas.io.IndentedWriter;
@@ -93,7 +93,7 @@ public abstract class SelectResponseDefaultFormatter extends QueryResultFormatte
         out.print(")\n") ;
     }
 
-    public void format(SolutionMappingImpl sr) {
+    public void format(SolutionMappingImpl<Binding> sr) {
         long cep_timestamp = sr.getCep_timestamp();
         if (cep_timestamp != last_result && distinct) {
             last_result = cep_timestamp;

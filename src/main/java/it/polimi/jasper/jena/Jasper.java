@@ -1,6 +1,7 @@
 package it.polimi.jasper.jena;
 
 import ee.ut.dsg.seraph.engine.esper.EsperRSPEngine;
+import it.polimi.jasper.engine.esper.EsperStreamRegistrationService;
 import it.polimi.jasper.jena.syntax.QueryFactory;
 import it.polimi.jasper.jena.syntax.RSPQLJenaQuery;
 import it.polimi.jasper.querying.Entailment;
@@ -36,7 +37,7 @@ public class Jasper extends EsperRSPEngine<Graph> implements QueryObserverRegist
         super(t0, configuration);
         this.reportGrain = ReportGrain.SINGLE;
         this.maintenance = Maintenance.NAIVE;
-        this.stream_registration_service = new EsperStreamRegistrationServiceImpl(admin);
+        this.stream_registration_service = new EsperStreamRegistrationService<>(admin);
 
         String entailment = rsp_config.getString("jasper.entailment");
 

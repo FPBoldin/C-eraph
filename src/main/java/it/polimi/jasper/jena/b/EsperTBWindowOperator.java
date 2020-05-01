@@ -21,7 +21,6 @@ import it.polimi.yasper.core.secret.report.Report;
 import it.polimi.yasper.core.secret.time.Time;
 import it.polimi.yasper.core.stream.data.WebDataStream;
 import lombok.RequiredArgsConstructor;
-import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Triple;
 
 import java.util.List;
@@ -53,21 +52,20 @@ public class EsperTBWindowOperator implements StreamToRelationOperator<Triple, B
 
     @Override
     public TimeVarying<BindingSet> apply(WebDataStream<Triple> s) {
-        EPStatement windowAssignerTB = EPLFactory.getWindowAssignerTB(tick, maintenance, report, eventtime, s.getURI(), wo.getStep(), wo.getRange(), wo.getUnitStep(), wo.getUnitRange(), wo.getType(), time);
-        EsperTBWindowAssigner consumer = new EsperTBWindowAssigner(EncodingUtils.encode(s.getURI()), windowAssignerTB);
+        EsperTBWindowAssigner consumer = new EsperTBWindowAssigner(EncodingUtils.encode(s.getURI()));
         s.addConsumer(consumer);
         return consumer.set(sds);
     }
 
     class EsperTBWindowAssigner extends AbstractEsperWindowAssigner<Triple, BindingSet> {
 
-        public EsperTBWindowAssigner(String name, EPStatement stm) {
-            super(name, EsperTBWindowOperator.this.tick, EsperTBWindowOperator.this.report, EsperTBWindowOperator.this.eventtime, stm, EsperTBWindowOperator.this.time);
+        public EsperTBWindowAssigner(String name) {
+            super(name, EsperTBWindowOperator.this.tick, EsperTBWindowOperator.this.report, EsperTBWindowOperator.this.maintenance, EsperTBWindowOperator.this.eventtime, EsperTBWindowOperator.this.time, EsperTBWindowOperator.this.wo);
         }
 
         public Content<Triple, BindingSet> getContent(long now) {
             SafeIterator<EventBean> iterator = statement.safeIterator();
-            ContentEventBean<Triple, Graph, BindingSet> content2 = new JenaBindingContent();
+            ContentEventBean<Triple, BindingSet> content2 = new JenaBindingContent();
             content2.setLast_timestamp_changed(now);
             while (iterator.hasNext()) {
                 content2.add(iterator.next());

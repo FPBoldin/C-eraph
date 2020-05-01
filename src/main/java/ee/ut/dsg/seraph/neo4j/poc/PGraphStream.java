@@ -1,11 +1,14 @@
-package ee.ut.dsg.seraph.neo4j;
+package ee.ut.dsg.seraph.neo4j.poc;
 
 
+import ee.ut.dsg.seraph.neo4j.PGraph;
+import ee.ut.dsg.seraph.neo4j.poc.data.PGraphImpl;
+import it.polimi.jasper.streams.EPLStream;
 import it.polimi.yasper.core.stream.web.WebStreamImpl;
 import lombok.SneakyThrows;
 
 public class PGraphStream extends WebStreamImpl implements Runnable {
-    private EPLPGraphStream stream;
+    private EPLStream<PGraph> stream;
     private PGraph pgrah;
 
     public PGraphStream(String stream_uri, PGraph pgrah) {
@@ -20,7 +23,7 @@ public class PGraphStream extends WebStreamImpl implements Runnable {
             Thread.sleep(5000);
         }
     }
-    public void setWritable(EPLPGraphStream register) {
+    public void setWritable(EPLStream<PGraph> register) {
         this.stream = register;
     }
 }

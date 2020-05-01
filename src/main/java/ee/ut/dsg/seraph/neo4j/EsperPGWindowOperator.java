@@ -1,14 +1,12 @@
 package ee.ut.dsg.seraph.neo4j;
 
-import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.SafeIterator;
 import it.polimi.jasper.operators.s2r.AbstractEsperWindowAssigner;
-import it.polimi.jasper.operators.s2r.epl.EPLFactory;
 import it.polimi.jasper.sds.tv.EsperTimeVaryingGeneric;
-import it.polimi.jasper.utils.EncodingUtils;
+import it.polimi.jasper.sds.tv.NamedEsperTimeVaryingGeneric;
+import it.polimi.jasper.streams.items.StreamItemImpl;
 import it.polimi.yasper.core.enums.Maintenance;
-import it.polimi.yasper.core.enums.ReportGrain;
 import it.polimi.yasper.core.enums.Tick;
 import it.polimi.yasper.core.operators.s2r.StreamToRelationOperator;
 import it.polimi.yasper.core.operators.s2r.execution.instance.Window;
@@ -22,17 +20,15 @@ import it.polimi.yasper.core.stream.data.WebDataStream;
 import lombok.RequiredArgsConstructor;
 import org.neo4j.graphdb.GraphDatabaseService;
 
-
 import java.util.List;
 import java.util.Observable;
 
 @RequiredArgsConstructor
-public class EsperGGWindowOperator implements StreamToRelationOperator<PGraph, PGraph> {
+public class EsperPGWindowOperator implements StreamToRelationOperator<PGraph, PGraph> {
 
     private final Tick tick;
     private final Report report;
     private final Boolean eventtime;
-    private final ReportGrain reportGrain;
     private final Maintenance maintenance;
     private final Time time;
     private final WindowNode wo;
@@ -59,18 +55,7 @@ public class EsperGGWindowOperator implements StreamToRelationOperator<PGraph, P
     class EsperGGWindowAssigner extends AbstractEsperWindowAssigner<PGraph, PGraph> {
 
         public EsperGGWindowAssigner(String name) {
-            super(EncodingUtils.encode(name),
-                    EsperGGWindowOperator.this.tick,
-                    EsperGGWindowOperator.this.report,
-                    EsperGGWindowOperator.this.eventtime,
-                    EPLFactory.getWindowAssigner(EsperGGWindowOperator.this.tick,
-                            EsperGGWindowOperator.this.maintenance,
-                            EsperGGWindowOperator.this.report,
-                            EsperGGWindowOperator.this.eventtime,
-                            name, wo.getStep(), wo.getRange(), wo.getUnitStep(), wo.getUnitRange(), wo.getType(),
-                            EsperGGWindowOperator.this.time)
-
-                    , EsperGGWindowOperator.this.time);
+            super(name, EsperPGWindowOperator.this.tick, EsperPGWindowOperator.this.report, Maintenance.NAIVE, EsperPGWindowOperator.this.eventtime, EsperPGWindowOperator.this.time, EsperPGWindowOperator.this.wo);
         }
 
         public Content<PGraph, PGraph> getContent(long now) {
@@ -92,8 +77,8 @@ public class EsperGGWindowOperator implements StreamToRelationOperator<PGraph, P
         @Override
         public TimeVarying<PGraph> set(SDS<PGraph> sds) {
             EsperTimeVaryingGeneric<PGraph, PGraph> n = named()
-                    ? new NamedEsperTimeVaryingPGraph(new ContentPGraphBean(db), name, EsperGGWindowOperator.this.maintenance, report, this, sds)
-                    : new EsperTimeVaryingPGraphImpl(new ContentPGraphBean(db), EsperGGWindowOperator.this.maintenance, report, this, sds);
+                    ? new NamedEsperTimeVaryingGeneric<>(new ContentPGraphBean(db), name, EsperPGWindowOperator.this.maintenance, report, this, sds)
+                    : new EsperTimeVaryingGeneric<>(new ContentPGraphBean(db), EsperPGWindowOperator.this.maintenance, report, this, sds);
             statement.addListener(n);
             return n;
         }
@@ -109,10 +94,10 @@ public class EsperGGWindowOperator implements StreamToRelationOperator<PGraph, P
 
             if (appTime < now) {
                 time.setAppTime(now);
-                runtime.sendEvent(new GraphStreamItem(now, g, name), name);
+                runtime.sendEvent(new StreamItemImpl<>(now, g, name), name);
                 return true;
             } else if (appTime == now) {
-                runtime.sendEvent(new GraphStreamItem(now, g, name), name);
+                runtime.sendEvent(new StreamItemImpl<>(now, g, name), name);
                 return true;
             } else
                 return false;
@@ -121,7 +106,7 @@ public class EsperGGWindowOperator implements StreamToRelationOperator<PGraph, P
 
         @Override
         public void update(Observable o, Object arg) {
-            PGraphStreamItem arg1 = (PGraphStreamItem) arg;
+            StreamItemImpl<PGraph> arg1 = (StreamItemImpl<PGraph>) arg;
             process(arg1.getTypedContent(), eventtime ? arg1.getAppTimestamp() : arg1.getSysTimestamp());
         }
 

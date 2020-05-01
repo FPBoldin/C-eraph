@@ -1,4 +1,5 @@
-package it.polimi.jasper.jena;
+package it.polimi.jasper.sds.tv;
+
 
 import it.polimi.jasper.secret.content.ContentEventBean;
 import it.polimi.yasper.core.enums.Maintenance;
@@ -7,16 +8,15 @@ import it.polimi.yasper.core.sds.SDS;
 import it.polimi.yasper.core.secret.report.Report;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
-import org.apache.jena.graph.Graph;
 
 @Log4j
 @Getter
-public class NamedEsperTimeVaryingGraph extends EsperTimeVaryingGraphImpl {
+public class NamedEsperTimeVaryingGeneric<I, O> extends EsperTimeVaryingGeneric<I, O> {
 
     private String uri;
 
-    public NamedEsperTimeVaryingGraph(ContentEventBean<Graph, ?, Graph> c, String uri, Maintenance maintenance, Report report, Assigner<Graph, Graph> wo, SDS<Graph> sds) {
-        super(c, maintenance, report, wo, sds);
+    public NamedEsperTimeVaryingGeneric(ContentEventBean<I, O> c, String uri, Maintenance maintenance, Report report, Assigner<I, O> wa, SDS<O> sds) {
+        super(c, maintenance, report, wa, sds);
         this.uri = uri;
     }
 

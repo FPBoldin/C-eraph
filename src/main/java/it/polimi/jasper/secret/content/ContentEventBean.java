@@ -12,22 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Log4j
-public abstract class ContentEventBean<I, T, O> implements Content<I,O> {
+public abstract class ContentEventBean<I, O> implements Content<I,O> {
 
     protected List<I> elements;
-    protected T content;
-
     @Setter
     private long last_timestamp_changed;
 
-    public ContentEventBean(T content) {
-        this.content = content;
+    public ContentEventBean() {
         this.elements = new ArrayList<>();
     }
-
-    protected ContentEventBean() {
-    }
-
 
     public void eval(EventBean[] newData, EventBean[] oldData) {
         DStreamUpdate(oldData);

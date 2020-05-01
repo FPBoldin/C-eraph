@@ -1,4 +1,4 @@
-package ee.ut.dsg.seraph.neo4j;
+package ee.ut.dsg.seraph.neo4j.poc.data;
 
 public class Event {
     private String initiated;

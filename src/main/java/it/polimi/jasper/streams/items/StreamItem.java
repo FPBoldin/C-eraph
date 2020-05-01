@@ -51,12 +51,6 @@ public abstract class StreamItem<T> extends HashMap<String, Object> {
         return this.containsKey(content) ? (T) this.get(content) : null;
     }
 
-    public abstract T addTo(T abox);
-
-    public abstract T removeFrom(T abox);
-
-    public abstract String getStreamURI();
-
     public long getTimestamp() {
         return (long) this.get(appTimestamp);
     }

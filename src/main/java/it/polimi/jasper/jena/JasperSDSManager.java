@@ -147,7 +147,6 @@ public class JasperSDSManager implements SDSManager {
                         this.tick,
                         this.report,
                         this.usingEventTime,
-                        this.reportGrain,
                         this.maintenance,
                         this.time,
                         wo,

@@ -13,7 +13,7 @@ import java.util.*;
  * Created by riccardo on 01/07/2017.
  */
 @Log4j
-public class AbstractSDS<T> extends Observable implements SDS<T>, Observer {
+public class GenericSDS<T> extends Observable implements SDS<T>, Observer {
 
     private boolean partialWindowsEnabled = false;
     private Time time = TimeFactory.getInstance();

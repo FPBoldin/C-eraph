@@ -1,8 +1,8 @@
-package ee.ut.dsg.seraph.neo4j;
+package ee.ut.dsg.seraph.neo4j.poc.data;
 
-import com.espertech.esper.event.xml.SchemaXMLEventType;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import ee.ut.dsg.seraph.neo4j.PGraph;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -16,7 +16,8 @@ public class PGraphImpl implements PGraph {
     public PGraphImpl() {
         URL url = getClass().getResource("/SocialNetwork");
         Gson gson = new Gson();
-        Type collectionType = new TypeToken<Collection<Event>>(){}.getType();
+        Type collectionType = new TypeToken<Collection<Event>>() {
+        }.getType();
         try {
             this.events = gson.fromJson(new FileReader(url.getPath()), collectionType);
         } catch (FileNotFoundException e) {

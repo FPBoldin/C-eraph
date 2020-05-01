@@ -8,14 +8,16 @@ import org.apache.jena.mem.GraphMem;
 import org.apache.jena.reasoner.Reasoner;
 
 @Log4j
-public class JenaGraphContent extends ContentEventBean<Graph, Graph, Graph> {
+public class JenaGraphContent extends ContentEventBean<Graph, Graph> {
+
+    private final Graph graph;
 
     public JenaGraphContent(Graph graph) {
-        super(graph);
+        this.graph = graph;
     }
 
     public JenaGraphContent() {
-        super(graph());
+        this.graph = graph();
     }
 
     private static Graph graph() {
@@ -25,15 +27,15 @@ public class JenaGraphContent extends ContentEventBean<Graph, Graph, Graph> {
 
     @Override
     public Graph coalesce() {
-        content.clear();
-        elements.forEach(ig -> GraphUtil.addInto(this.content, ig));
+        graph.clear();
+        elements.forEach(ig -> GraphUtil.addInto(this.graph, ig));
         //        elements.stream().flatMap(ig->GraphUtil.findAll(ig).toList().stream()).forEach(this.graph::add);
 
-        return this.content;
+        return this.graph;
     }
 
     public void replace(Graph coalesce) {
-        this.content.clear();
-        GraphUtil.addInto(content, coalesce);
+        this.graph.clear();
+        GraphUtil.addInto(graph, coalesce);
     }
 }

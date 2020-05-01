@@ -11,13 +11,13 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.ModelFactory;
 
 @Log4j
-public class JenaBindingContent extends ContentEventBean<Triple, Graph, BindingSet> {
+public class JenaBindingContent extends ContentEventBean<Triple, BindingSet> {
 
     private Query query;
     private BindingSet set;
+    private Graph content;
 
     public JenaBindingContent() {
-        super(new GraphMem());
         set = new BindingSet();
     }
 
