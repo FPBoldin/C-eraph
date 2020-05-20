@@ -12,7 +12,6 @@ import it.polimi.yasper.core.enums.Maintenance;
 import it.polimi.yasper.core.enums.Tick;
 import it.polimi.yasper.core.format.QueryResultFormatter;
 import it.polimi.yasper.core.operators.s2r.syntax.WindowNode;
-import it.polimi.yasper.core.querying.ContinuousQueryExecution;
 import it.polimi.yasper.core.sds.SDSConfiguration;
 import it.polimi.yasper.core.sds.timevarying.TimeVarying;
 import it.polimi.yasper.core.secret.report.ReportImpl;
@@ -24,27 +23,26 @@ import org.neo4j.test.TestDatabaseManagementServiceBuilder;
 import java.net.URL;
 import java.util.Map;
 import java.util.Observable;
-import java.util.Observer;
 
 import static org.neo4j.configuration.GraphDatabaseSettings.DEFAULT_DATABASE_NAME;
 
-public class KaypherExample {
+public class CeraphExample {
 
-    static Kaypher sr;
+    static Ceraph sr;
 
     public static EngineConfiguration aDefault;
-
 
     public static void main(String[] args) {
 
         TestDatabaseManagementServiceBuilder builder = new TestDatabaseManagementServiceBuilder();
         GraphDatabaseService db = builder.impermanent().build().database(DEFAULT_DATABASE_NAME);
-        URL resource = KaypherExample.class.getResource("/kaypher.properties");
+        URL resource = CeraphExample.class.getResource("/kaypher.properties");
 
         try {
-//            EngineConfiguration en = new EngineConfiguration("/home/fred/IdeaProjects/C-eraph-v2/src/main/resources/kaypher.properties");
-            EngineConfiguration en = new EngineConfiguration("/Users/riccardo/_Projects/ceraph/src/main/resources/kaypher.properties");
-            sr = new Kaypher(0, en);
+            // "/home/fred/IdeaProjects/C-eraph/src/main/resources/ceraph.properties"
+            //EngineConfiguration en = new EngineConfiguration("/Users/riccardo/_Projects/ceraph/src/main/resources/ceraph.properties");
+            EngineConfiguration en = new EngineConfiguration(resource.getPath());
+            sr = new Ceraph(0, en);
             SDSConfiguration config = new SDSConfiguration(resource.getPath());
 
             //Streams
@@ -71,7 +69,7 @@ public class KaypherExample {
                     q,
                     sds,
                     new R2ROperatorCypher(q, sds, "SocialNetwork", db),
-                    new JRStream<Map<String, Object>>(),
+                    new JRStream<>(),
                     wo);
 
             EPLStream<PGraph> register = (EPLStream<PGraph>) sr.register(writer);

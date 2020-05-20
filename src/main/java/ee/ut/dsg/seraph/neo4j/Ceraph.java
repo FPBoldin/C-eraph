@@ -12,9 +12,9 @@ import it.polimi.yasper.core.querying.ContinuousQuery;
 import it.polimi.yasper.core.querying.ContinuousQueryExecution;
 import it.polimi.yasper.core.sds.SDSConfiguration;
 
-public class Kaypher extends EsperRSPEngine<PGraph> implements QueryObserverRegistrationFeature, QueryRegistrationFeature<Seraph>, QueryStringRegistrationFeature {
+public class Ceraph extends EsperRSPEngine<PGraph> implements QueryObserverRegistrationFeature, QueryRegistrationFeature<Seraph>, QueryStringRegistrationFeature {
 
-    public Kaypher(long t0, EngineConfiguration configuration) {
+    public Ceraph(long t0, EngineConfiguration configuration) {
         super(t0, configuration);
         stream_registration_service = new EsperStreamRegistrationService<PGraph>(admin);
     }
