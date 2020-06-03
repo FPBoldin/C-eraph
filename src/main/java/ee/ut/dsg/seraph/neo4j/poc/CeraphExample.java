@@ -1,6 +1,7 @@
 package ee.ut.dsg.seraph.neo4j.poc;
 
 
+import ee.ut.dsg.seraph.kafka.AvroProducer;
 import ee.ut.dsg.seraph.neo4j.*;
 import it.polimi.jasper.operators.r2s.JRStream;
 import it.polimi.jasper.operators.s2r.epl.RuntimeManager;
