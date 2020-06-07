@@ -7,11 +7,19 @@ public class AvroProducerMain {
         String topic = "sne-avro";
         AvroProducer ap = new AvroProducer(topic);
 
+        for (int i = 0; i < 10000; i++) {
+            ap.produce();
+        }
+        System.out.println("Exiting");
+        System.exit(0);
+
+/*
         while (true) {
             ap.produce();
             //stream.put(new PGraphImpl(),System.currentTimeMillis());
-            Thread.sleep(50);
+            Thread.sleep(0);
         }
+  */
     }
 
 }

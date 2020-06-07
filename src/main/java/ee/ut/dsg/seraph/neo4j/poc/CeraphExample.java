@@ -34,6 +34,7 @@ public class CeraphExample {
     public static EngineConfiguration aDefault;
 
     public static void main(String[] args) {
+        System.out.println(System.currentTimeMillis() + "Start time of the program");
 
         TestDatabaseManagementServiceBuilder builder = new TestDatabaseManagementServiceBuilder();
         GraphDatabaseService db = builder.impermanent().build().database(DEFAULT_DATABASE_NAME);
@@ -48,7 +49,9 @@ public class CeraphExample {
 
             //Streams
 
-            Seraph q = new Seraph("MATCH (n:Person)-[p]->(n1:Person) RETURN n, keys(n)");
+            //Seraph q = new Seraph("MATCH (n:Person)-[p]->(n1:Person) RETURN n, count(n)");
+            Seraph q = new Seraph("MATCH (n:Person)-[p]->(n1:Person)" +
+                    "RETURN count(n)");
 
             GenericSDS<PGraph> sds = new GenericSDS<PGraph>();
 

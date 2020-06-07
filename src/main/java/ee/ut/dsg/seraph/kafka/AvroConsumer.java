@@ -17,6 +17,7 @@ public class AvroConsumer {
 
     private KafkaConsumer<String, SocialNetworkEvent> consumer;
     private String topic;
+    private int totalNumberOfRecordsConsumed;
 
     public AvroConsumer(String topic) {
         this.consumer = new KafkaConsumer<>(getAvroProps());
@@ -38,18 +39,24 @@ public class AvroConsumer {
         props.setProperty("specific.avro.reader", "true");
         return props;
     }
-    public List<SocialNetworkEvent> consume(){
+    public ConsumerRecords<String, SocialNetworkEvent> consume(){
         consumer.subscribe(Collections.singleton(topic));
 
-        System.out.println("Waiting for data...");
-
-            System.out.println("Polling");
+            //TODO return records iterate in pgraphstream
             ConsumerRecords<String, SocialNetworkEvent> records = consumer.poll(100);
-            List<SocialNetworkEvent> events = new ArrayList<>();
-            records.forEach(event -> events.add(event.value()));
+            //totalNumberOfRecordsConsumed += records.count();
+            //System.out.println(totalNumberOfRecordsConsumed + "Number of records consumed");
+            //List<SocialNetworkEvent> events = new ArrayList<>();
+            //records.forEach(event -> events.add(event.value()));
+
+            if (totalNumberOfRecordsConsumed >= 10000){
+                System.out.println("Events consumed end of consumption");
+                System.out.println(records.count());
+
+            }
 
             consumer.commitSync();
-            return events;
+            return records;
     }
 
 

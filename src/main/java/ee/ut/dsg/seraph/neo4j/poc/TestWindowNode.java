@@ -29,12 +29,12 @@ public class TestWindowNode implements WindowNode {
 
     @Override
     public long getRange() {
-        return Duration.ofSeconds(10).toMillis();
+        return Duration.ofSeconds(30).toMillis();
     }
 
     @Override
     public long getStep() {
-        return Duration.ofSeconds(10).toMillis();
+        return Duration.ofSeconds(30).toMillis();
     }
 
     @Override

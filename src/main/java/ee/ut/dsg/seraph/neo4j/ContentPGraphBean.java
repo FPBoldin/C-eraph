@@ -108,7 +108,6 @@ public class ContentPGraphBean extends ContentEventBean<PGraph, PGraph> {
         */
         elements.forEach(pGraph -> {
             try {
-
                 //TODO add the name of the window operator.
                 //one can see this as a
                 pGraph.nodes().forEach(node -> {
